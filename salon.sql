@@ -16,15 +16,15 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
-DROP DATABASE salon;
+-- DROP DATABASE salon;
 --
 -- Name: salon; Type: DATABASE; Schema: -; Owner: marct
 --
 
-CREATE DATABASE salon WITH TEMPLATE = template0 ENCODING = 'WIN1252' LOCALE_PROVIDER = libc LOCALE = 'English_United States.1252';
+-- CREATE DATABASE salon WITH TEMPLATE = template0 ENCODING = 'WIN1252' LOCALE_PROVIDER = libc LOCALE = 'English_United States.1252';
 
 
-ALTER DATABASE salon OWNER TO marct;
+-- ALTER DATABASE salon OWNER TO marct;
 
 \connect salon
 
