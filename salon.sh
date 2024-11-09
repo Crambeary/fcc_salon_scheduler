@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# PSQL="psql --username=freecodecamp --dbname=salon -c"
-PSQL="psql --username=marct --dbname=salon --tuples-only -c "
+PSQL="psql --username=freecodecamp --dbname=salon --tuples-only -c"
+# PSQL="psql --username=marct --dbname=salon --tuples-only -c "
 
 echo -e "\n~~~~~ MY SALON ~~~~~"
 
@@ -16,19 +16,19 @@ SERVICE_MENU() {
     echo "$SERVICE_ID) $SERVICE_NAME"
   done
   # ask for service
-  read SERVICE_ID_CHOICE
+  read SERVICE_ID_SELECTED
   # if not a valid selection, error and retry
-  SERVICE_AVAILABLE_NAME=$($PSQL "SELECT name FROM services WHERE service_id = $SERVICE_ID_CHOICE")
-  echo $SERVICE_AVAILABLE_NAME
-  if [[ -z $SERVICE_AVAILABLE_NAME ]]
+  SERVICE_TYPE=$($PSQL "SELECT name FROM services WHERE service_id = $SERVICE_ID_SELECTED")
+  echo $SERVICE_TYPE
+  if [[ -z $SERVICE_TYPE ]]
   then
     echo -e "I could not find that service. What would you like today?"
     SERVICE_MENU
   else
     # get customer info
     echo -e "What's your phone number?"
-    read PHONE_NUMBER
-    CUSTOMER_NAME=$($PSQL "SELECT name FROM customers WHERE phone='$PHONE_NUMBER'")
+    read CUSTOMER_PHONE
+    CUSTOMER_NAME=$($PSQL "SELECT name FROM customers WHERE phone='$CUSTOMER_PHONE'")
 
     # if customer doesn't exist
     if [[ -z $CUSTOMER_NAME ]]
@@ -38,20 +38,20 @@ SERVICE_MENU() {
       read CUSTOMER_NAME
 
       # insert new customer
-      INSERT_CUSTOMER_RESULT=$($PSQL "INSERT INTO customers(name, phone) VALUES('$CUSTOMER_NAME', '$PHONE_NUMBER')")
+      INSERT_CUSTOMER_RESULT=$($PSQL "INSERT INTO customers(name, phone) VALUES('$CUSTOMER_NAME', '$CUSTOMER_PHONE')")
     fi
-    SERVICE_FORMATTED=$(echo $SERVICE_AVAILABLE_NAME | sed -r 's/^ *| *$//g')
+    SERVICE_FORMATTED=$(echo $SERVICE_TYPE | sed -r 's/^ *| *$//g')
     NAME_FORMATTED=$(echo $CUSTOMER_NAME| sed -r 's/^ *| *$//g')
     # get appointment time
     echo -e "\nWhat time would you like your $SERVICE_FORMATTED, $NAME_FORMATTED?"
-    read APPOINTMENT_TIME
+    read SERVICE_TIME
 
     # get customer id
-    CUSTOMER_ID=$($PSQL "SELECT customer_id FROM customers WHERE phone='$PHONE_NUMBER'")
+    CUSTOMER_ID=$($PSQL "SELECT customer_id FROM customers WHERE phone='$CUSTOMER_PHONE'")
 
     # insert appointment
-    INSERT_APPOINTMENT_RESULT=$($PSQL "INSERT INTO appointments(customer_id, service_id, time) VALUES($CUSTOMER_ID, $SERVICE_ID_CHOICE, '$APPOINTMENT_TIME')")
-    echo -e "\nI have put you down for a $SERVICE_FORMATTED at $APPOINTMENT_TIME, $NAME_FORMATTED"
+    INSERT_APPOINTMENT_RESULT=$($PSQL "INSERT INTO appointments(customer_id, service_id, time) VALUES($CUSTOMER_ID, $SERVICE_ID_SELECTED, '$SERVICE_TIME')")
+    echo -e "\nI have put you down for a $SERVICE_FORMATTED at $SERVICE_TIME, $NAME_FORMATTED."
   fi
 }
 
